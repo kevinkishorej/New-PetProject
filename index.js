@@ -29,14 +29,14 @@ app.use(express.static(path.join(__dirname,'Public')));
 //mongoose Implement..
 mongoose.set('useNewUrlParser',true);
 mongoose.set('useUnifiedTopology',true);
-mongoose.connect("mongodb://localhost:27017/TN-Petshop",()=>{
+mongoose.connect("mongodb+srv://kevin:jobs@420@cluster0.noh1o.mongodb.net/online-petshop?retryWrites=true&w=majority",()=>{
  console.log("Mongo DB is connected with "+process.env.MONGODB)
-});
+});    
 
 //router Implement...
 app.use('/',router)
-app.get('/*',(req,res)=>{
-    res.sendFile(path.join(__dirname,'Public'))
+app.get('*',(req,res)=>{
+    res.sendFile(path.join(__dirname,'Public/index.html'))
 });
 
 //Starting server..
