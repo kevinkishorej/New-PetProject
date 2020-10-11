@@ -1,5 +1,5 @@
 const User = require('../DataBase/schema');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 var passport = require('passport')
   , LocalStrategy = require('passport-local').Strategy;
 

@@ -3,7 +3,7 @@ const passport = require('passport')
 const router = express.Router();
 const info = require('../DataBase/schema');
 const productinfo = require('../DataBase/Productschema')
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer  = require('multer')
 
