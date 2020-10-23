@@ -1,4 +1,6 @@
 const express = require('express');
+const app = express();
+app.use(express.json());
 const passport = require('passport')
 const router = express.Router();
 const info = require('../DataBase/schema');
@@ -6,6 +8,10 @@ const productinfo = require('../DataBase/Productschema')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const multer  = require('multer')
+require('dotenv').config();
+const AWS = require('aws-sdk');
+const uuid = require('uuid');
+const cloudinary = require('cloudinary')
 
 
 //Get router....
@@ -44,7 +50,7 @@ router.post('/log_in', async function(req, res, next) {
          if (user){  
             var id = user._id
             var token = jwt.sign({id},"private key",{
-                expiresIn:'1h'
+                expiresIn:'24h'
             });
             return res.json({
                success:true,
@@ -90,51 +96,43 @@ router.put('/profile-update',async(req,res)=>{
   res.status(200).json(update);   
 })
  
-
+require('../clodinary/clodinar-confic')
 //Multer storeage for UserProfilePic......
-const storage = multer.diskStorage({   
-    
-   destination:(req,file,cb)=>{
-       cb(null,'uploads/images')
-   },
-   filename:(req,file,cb)=>{
-       cb(null,file.originalname)  
-   }
-});
+const upload = require('../multerconfic/multer')
 
-const upload = multer({storage:storage});
 router.put('/profilePic', upload.single('userimage'), async (req, res)=>{
-   console.log(req.file);
-   const update = await info.updateOne({_id:req.body._id},{$set:{ 
+   const result = await cloudinary.v2.uploader.upload(req.file.path)
+    const update = await info.updateOne({_id:req.body._id},{$set:{ 
         
-      userimage:req.file.path    
+      userimage:result.secure_url   
       }});
+    console.log(result.secure_url )
       res.status(200).json(update);  
 })
 
 
 
  //Multer storeage2 for ProductProfilePic......
- const storage2 = multer.diskStorage({   
-    
-   destination:(req,file,cb)=>{
-       cb(null,'uploads/prodectimage2')
-   },
-   filename:(req,file,cb)=>{
-       cb(null,file.originalname)  
-   }
-})
 
-const upload2 = multer({storage:storage2})
+ const upload2 = require('../multerconfic/multer-prodect')
 
 router.post('/productinfo',upload2.array('image1',3),async(req,res)=>{
-   var paths = req.files.map(file => file.path)
+
+// if you are adding multiple files at a go
+      const imageURIs = []; // array to hold the image urls
+      const files = req.files; // array of images
+      for (const file of files) {
+          const { path } = file;
+          imageURIs.push(path);
+      }
+// var paths = req.files.map(file => file.path)
+
    const prodect =await new productinfo({
       title:req.body.title,
       description:req.body.description,
       breed:req.body.breed,
       petage:req.body.petage,
-      image1:paths,
+      image1:imageURIs,
       location:req.body.location,
       address:req.body.address,
       phonenumber:req.body.phonenumber,
