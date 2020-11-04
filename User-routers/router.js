@@ -178,13 +178,25 @@ router.post('/getUserAD',async(req,res)=>{
 
 
 //get productDetails....
+//Currenty it is not working
 router.get('/productDetail',async(req,res)=>{
    var id = req.headers['id'];
    const get = await productinfo.findById({_id:id})
    res.json(get)
-})
+});
 
-
+//get productDetails....
+router.get('/productDetail/:id',async(req,res)=>{
+   
+   try{
+      var id = req.params.id
+      const get = await productinfo.findById({_id:id})
+      res.json(get)
+   }catch{
+      res.json({Error:"Worng Product URL"})
+   }
+     
+}); 
 
 //Expoting to index.js All routing file....
 module.exports = router ;           

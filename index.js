@@ -25,7 +25,7 @@ app.use(passport.session());
 app.use('/uploads/images',express.static('uploads/images'));
 app.use('/uploads/prodectimage2',express.static('uploads/prodectimage2'))
 app.use(express.static(path.join(__dirname,'Public')));
-
+app.use(express.static(path.join(__dirname,'Public/index.html')));
 //mongoose Implement..
 mongoose.set('useNewUrlParser',true);
 mongoose.set('useUnifiedTopology',true);
@@ -34,8 +34,9 @@ mongoose.connect("mongodb+srv://kevin:jobs@420@cluster0.noh1o.mongodb.net/online
 });    
 
 //router Implement...
-app.use('/',router)
-app.get('*',(req,res)=>{
+
+app.use('/',router);
+app.get('/*',(req,res)=>{
     res.sendFile(path.join(__dirname,'Public/index.html'))
 });
 
